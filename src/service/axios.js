@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const baseURL = 'http://localhost:3000'
+const baseURL = 'https://netease-cloud-music-api-beta-six.vercel.app'
 
 axios.defaults.baseURL = baseURL
 

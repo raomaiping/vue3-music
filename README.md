@@ -1,5 +1,8 @@
 # vue3-music
 
+## 预览地址 
+[vue3-music](https://music.raomaiping.host/)
+
 ## Project setup
 ```
 npm install

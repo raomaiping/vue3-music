@@ -1,6 +1,7 @@
 <template>
   <div class="singer" v-loading="!singers.length">
-   <index-list :data="singers"></index-list>
+   <index-list :data="singers" @select="selectSinger"></index-list>
+   <router-view :singer="selectedSinger"></router-view>
   </div>
 </template>
 
@@ -15,7 +16,8 @@ export default {
   },
   data () {
     return {
-      singers: []
+      singers: [],
+      selectedSinger: null
     }
   },
   async created () {
@@ -51,6 +53,10 @@ export default {
         })
       }
       return singerList.sort((a, b) => a.title.charCodeAt(0) - b.title.charCodeAt(0))
+    },
+    selectSinger (singer) {
+      this.selectedSinger = singer
+      this.$router.push(`/singer/${singer.id}`)
     }
   }
 }

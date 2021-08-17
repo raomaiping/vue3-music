@@ -11,6 +11,8 @@
 import { getSingerDetail } from '@/service/singer'
 import { processSongs } from '@/service/song'
 import MusicList from '@/components/music-list/music-list'
+import storage from 'good-storage'
+import { SINGER_KEY } from '@/assets/js/constant.js'
 export default {
   name: 'singer-detail',
   props: {
@@ -26,15 +28,35 @@ export default {
     }
   },
   computed: {
+    computedSinger () {
+      let ret = null
+      const singer = this.singer
+      if (singer) {
+        ret = singer
+      } else {
+        const cachedSinger = storage.session.get(SINGER_KEY)
+        if (cachedSinger && cachedSinger.id === +this.$route.params.id) {
+          ret = cachedSinger
+        }
+      }
+      return ret
+    },
     pic () {
-      return this.singer && this.singer.picUrl
+      const singer = this.computedSinger
+      return singer && singer.picUrl
     },
     title () {
-      return this.singer && this.singer.name
+      const singer = this.computedSinger
+      return singer && singer.name
     }
   },
   async created () {
-    const result = await getSingerDetail(this.singer.id)
+    if (!this.computedSinger) {
+      const path = this.$route.matched[0].path
+      this.$router.push({ path })
+      return
+    }
+    const result = await getSingerDetail(this.computedSinger.id)
     this.songs = await processSongs(result.hotSongs)
     this.loading = false
   }

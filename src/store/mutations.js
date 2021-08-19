@@ -9,13 +9,16 @@ const mutations = {
     state.playlist = list
   },
   setPlayMode (state, mode) {
-    state.mode = mode
+    state.playMode = mode
   },
   setCurrentIndex (state, index) {
     state.currentIndex = index
   },
   setFullScreen (state, fullScreen) {
     state.fullScreen = fullScreen
+  },
+  setFavoriteList (state, list) {
+    state.favoriteList = list
   }
 }
 

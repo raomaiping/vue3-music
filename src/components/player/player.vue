@@ -16,7 +16,7 @@
         <div class="bottom">
           <div class="operators">
             <div class="icon i-left">
-              <i class="icon-sequence"></i>
+              <i @click="changeMode" :class="modeIcon"></i>
             </div>
             <div class="icon i-left" :class="disableCls">
               <i  @click="prev" class="icon-prev"></i>
@@ -27,8 +27,8 @@
             <div class="icon i-right" :class="disableCls">
               <i  @click="next" class="icon-next"></i>
             </div>
-            <div class="icon i-right">
-              <i class="icon-not-favorite"></i>
+            <div class="icon i-right" @click="toggleFavorite(currentSong)">
+              <i :class="getFavoriteIcon(currentSong)"></i>
             </div>
           </div>
         </div>
@@ -41,11 +41,15 @@
 <script>
 import { useStore } from 'vuex'
 import { computed, ref, watch } from 'vue'
+import useMode from './use-mode'
+import useFavorite from './use-favorite'
 export default {
   name: 'player',
   setup () {
+    // data
     const audioRef = ref(null)
     const songReady = ref(false)
+    // store
     const store = useStore()
     const fullScreen = computed(() => store.state.fullScreen)
     const currentSong = computed(() => store.getters.currentSong)
@@ -55,9 +59,14 @@ export default {
     const playIcon = computed(() => {
       return playing.value ? 'icon-pause' : 'icon-play'
     })
+    // hooks
+    const { modeIcon, changeMode } = useMode()
+    const { getFavoriteIcon, toggleFavorite } = useFavorite()
+    // computed
     const disableCls = computed(() => {
       return songReady.value ? '' : 'disable'
     })
+    // watch
     watch(currentSong, (newSong) => {
       if (!newSong.id || !newSong.url) {
         return
@@ -73,7 +82,7 @@ export default {
       const audioEl = audioRef.value
       newPlaying ? audioEl.play() : audioEl.pause()
     })
-
+    // methods
     function goBack () {
       store.commit('setFullScreen', false)
     }
@@ -85,7 +94,7 @@ export default {
 
     function prev () {
       const list = playlist.value
-      if (~!songReady.value || !list.length) return
+      if (!songReady.value || !list.length) return
       if (list.length === 1) {
         loop()
       } else {
@@ -146,7 +155,12 @@ export default {
       next,
       ready,
       disableCls,
-      error
+      error,
+      // mode
+      modeIcon,
+      changeMode,
+      toggleFavorite,
+      getFavoriteIcon
     }
   }
 }
